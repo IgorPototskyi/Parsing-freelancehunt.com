@@ -10,17 +10,31 @@ LAST_PAGE = '?page=99'
 
 
 def get_html(url):
+    """
+    Get html from url
+    :param url: string with url
+    :return: html
+    """
     request = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     return urlopen(request).read()
 
 
 def get_page_count():
-    # get_html(BASE_URL + LAST_PAGE)
+    """
+    Get page count from static url
+    :return: page count
+    """
     soup = BeautifulSoup(get_html(BASE_URL + LAST_PAGE), 'html.parser')
     return int(soup.find('div', class_='pagination').find_all('li')[-2].find('a').text)
 
 
 def parse(html):
+    """
+    Get list of projects from html. Every project has fields:
+        title, categories, price, application, time, final_date, link
+    :param html: html
+    :return: list of projects
+    """
     soup = BeautifulSoup(html, 'html.parser')
     table = soup.find('table', class_='table table-normal')
     rows = table.find_all('tr')[1:]
@@ -58,6 +72,11 @@ def parse(html):
 
 
 def save(projects):
+    """
+    Save projects to .csv file
+    :param projects: list of projects
+    :return: None
+    """
     current_date = datetime.datetime.now()
     filename = 'result_' + current_date.strftime('%d%m%Y_%H%M%S') + '.csv'
     with open(filename, 'x', encoding='utf-16', newline='') as csvfile:
